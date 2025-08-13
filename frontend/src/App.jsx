@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 // Mock API functions (replace with actual API calls)
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_BASE; // Vite
+
 
 const api = {
   submitMeal: async (data) => {

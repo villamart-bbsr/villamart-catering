@@ -11,7 +11,14 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const ADMIN_PASSKEY = process.env.ADMIN_PASSKEY || 'admin123';
 
 // Middleware
-app.use(cors());
+const allowedOrigins = process.env.CLIENT_URL?.split(","); // supports comma-separated list
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // MongoDB Connection
