@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Users, Utensils, Shield, CheckCircle, XCircle, Calendar, TrendingUp, User, Leaf } from 'lucide-react';
+import { Clock, Users, Utensils, Shield, CheckCircle, XCircle, Calendar, TrendingUp, User, Leaf, Coffee } from 'lucide-react';
 
 // Mock API functions (replace with actual API calls)
 const API_BASE = import.meta.env.VITE_API_BASE; // Vite
@@ -29,6 +29,31 @@ const api = {
     });
     return response.json();
   }
+};
+
+// Helper function to determine breakfast date logic
+const getBreakfastDateInfo = () => {
+  const now = new Date();
+  const hour = now.getHours();
+  
+  // Breakfast is for NEXT DAY if current time >= 6 AM
+  // Breakfast is for SAME DAY if current time < 6 AM (midnight to 6 AM)
+  const isNextDay = hour >= 6;
+  const targetDate = new Date();
+  
+  if (isNextDay) {
+    targetDate.setDate(targetDate.getDate() + 1);
+  }
+  
+  return {
+    isNextDay,
+    targetDate: targetDate.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      month: 'long', 
+      day: 'numeric' 
+    }),
+    timeRange: hour >= 6 ? "After 6 AM" : "Before 6 AM"
+  };
 };
 
 // Homepage Component
@@ -75,7 +100,15 @@ const Homepage = ({ setCurrentView, setIsAdmin }) => {
         type: formData.status === 'In' ? formData.type : null
       });
       
-      alert('Submission successful!');
+      const breakfastInfo = getBreakfastDateInfo();
+      if (formData.mode === 'Breakfast' && breakfastInfo.isNextDay) {
+        alert(`Breakfast submission successful for ${breakfastInfo.targetDate}!`);
+      } else if (formData.mode === 'Breakfast') {
+        alert(`Breakfast submission successful for today!`);
+      } else {
+        alert('Submission successful!');
+      }
+      
       setFormData({ name: '', mode: 'Lunch', status: '', type: '' });
       setShowTypeSelection(false);
     } catch (error) {
@@ -91,6 +124,8 @@ const Homepage = ({ setCurrentView, setIsAdmin }) => {
     if (hour < 17) return "Good Afternoon";
     return "Good Evening";
   };
+
+  const breakfastInfo = getBreakfastDateInfo();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-4">
@@ -150,8 +185,12 @@ const Homepage = ({ setCurrentView, setIsAdmin }) => {
                 <Utensils className="w-4 h-4" />
                 <span>Meal Type</span>
               </label>
-              <div className="grid grid-cols-2 gap-3">
-                {['Lunch', 'Dinner'].map(mode => (
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { mode: 'Breakfast', icon: '🌅', bgColor: 'from-yellow-500 to-orange-500' },
+                  { mode: 'Lunch', icon: '🍽️', bgColor: 'from-green-500 to-emerald-500' },
+                  { mode: 'Dinner', icon: '🌙', bgColor: 'from-blue-500 to-indigo-500' }
+                ].map(({ mode, icon, bgColor }) => (
                   <label key={mode} className="relative">
                     <input
                       type="radio"
@@ -163,14 +202,35 @@ const Homepage = ({ setCurrentView, setIsAdmin }) => {
                     />
                     <div className={`p-4 rounded-xl border-2 cursor-pointer transition-all text-center font-medium ${
                       formData.mode === mode
-                        ? 'border-green-500 bg-green-500 text-white shadow-lg'
+                        ? `border-transparent bg-gradient-to-r ${bgColor} text-white shadow-lg`
                         : 'border-green-200 bg-green-50 text-green-700 hover:border-green-300 hover:bg-green-100'
                     }`}>
-                      {mode === 'Lunch' ? '🍽️' : '🍽️'} {mode}
+                      <div className="text-2xl mb-1">{icon}</div>
+                      <div className="text-sm">{mode}</div>
                     </div>
                   </label>
                 ))}
               </div>
+              
+              {/* Breakfast Info Banner */}
+              {formData.mode === 'Breakfast' && (
+                <div className="bg-gradient-to-r from-yellow-100 to-orange-100 border-2 border-yellow-200 rounded-xl p-4 animate-in slide-in-from-top-2 duration-300">
+                  <div className="flex items-start space-x-3">
+                    <Coffee className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                    <div className="text-sm">
+                      <p className="font-semibold text-yellow-800 mb-1">
+                        Breakfast Selection ({breakfastInfo.timeRange})
+                      </p>
+                      <p className="text-yellow-700">
+                        {breakfastInfo.isNextDay 
+                          ? `You're selecting breakfast for tomorrow (${breakfastInfo.targetDate})`
+                          : `You're selecting breakfast for today`
+                        }
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Status Selection */}
@@ -205,45 +265,44 @@ const Homepage = ({ setCurrentView, setIsAdmin }) => {
 
             {/* Type Selection (only if "In" is selected) */}
             {showTypeSelection && (
-  <div className="space-y-3 animate-in slide-in-from-top-2 duration-300">
-    <label className="flex items-center space-x-2 text-green-700 font-semibold">
-      <Leaf className="w-4 h-4" />
-      <span>Food Preference</span>
-    </label>
-    <div className="grid grid-cols-2 gap-3">
-      {[
-        { type: 'Veg', icon: '🌱', color: 'emerald' },
-        { type: 'Non-Veg', icon: '🍖', color: 'orange' }
-      ]
-        // Filter so Non-Veg appears only on Sunday (0), Wednesday (3), and Friday (5)
-        .filter(({ type }) => {
-          const today = new Date().getDay();
-          if (type === 'Non-Veg') {
-            return [0, 3, 5].includes(today);
-          }
-          return true; // Always keep Veg
-        })
-        .map(({ type, icon, color }) => (
-          <button
-            key={type}
-            type="button"
-            onClick={() => setFormData({ ...formData, type })}
-            className={`p-4 rounded-xl font-semibold transition-all text-center border-2 ${
-              formData.type === type
-                ? color === 'emerald'
-                  ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg'
-                  : 'bg-orange-500 text-white border-orange-500 shadow-lg'
-                : 'bg-green-50 text-green-700 border-green-200 hover:border-green-300 hover:bg-green-100'
-            }`}
-          >
-            <div className="text-2xl mb-1">{icon}</div>
-            {type}
-          </button>
-        ))}
-    </div>
-  </div>
-)}
-
+              <div className="space-y-3 animate-in slide-in-from-top-2 duration-300">
+                <label className="flex items-center space-x-2 text-green-700 font-semibold">
+                  <Leaf className="w-4 h-4" />
+                  <span>Food Preference</span>
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { type: 'Veg', icon: '🌱', color: 'emerald' },
+                    { type: 'Non-Veg', icon: '🍖', color: 'orange' }
+                  ]
+                    // Filter so Non-Veg appears only on Sunday (0), Wednesday (3), and Friday (5)
+                    .filter(({ type }) => {
+                      const today = new Date().getDay();
+                      if (type === 'Non-Veg') {
+                        return [0, 3, 5].includes(today);
+                      }
+                      return true; // Always keep Veg
+                    })
+                    .map(({ type, icon, color }) => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, type })}
+                        className={`p-4 rounded-xl font-semibold transition-all text-center border-2 ${
+                          formData.type === type
+                            ? color === 'emerald'
+                              ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg'
+                              : 'bg-orange-500 text-white border-orange-500 shadow-lg'
+                            : 'bg-green-50 text-green-700 border-green-200 hover:border-green-300 hover:bg-green-100'
+                        }`}
+                      >
+                        <div className="text-2xl mb-1">{icon}</div>
+                        {type}
+                      </button>
+                    ))}
+                </div>
+              </div>
+            )}
 
             {/* Submit Button */}
             <button
@@ -388,11 +447,11 @@ const AdminDashboard = ({ setCurrentView, setIsAdmin }) => {
       setLoading(false);
     }
   };
- const handleDownload = () => {
-  if (!selectedDate) return alert("Please select a date first!");
-  window.open(`${API_BASE}/admin/export-excel?date=${selectedDate}`, '_blank');
-};
 
+  const handleDownload = () => {
+    if (!selectedDate) return alert("Please select a date first!");
+    window.open(`${API_BASE}/admin/export-excel?date=${selectedDate}`, '_blank');
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
@@ -455,16 +514,17 @@ const AdminDashboard = ({ setCurrentView, setIsAdmin }) => {
               </h1>
               <p className="text-green-600">Catering Management System</p>
             </div>
-            <button onClick={handleDownload} className="bg-green-500 text-white px-4 py-2 rounded">
-  Download Excel
-</button>
-            <button
-              onClick={handleLogout}
-              className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all shadow-lg hover:shadow-xl"
-            >
-              Logout
-            </button>
-
+            <div className="flex gap-3">
+              <button onClick={handleDownload} className="bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600 transition-colors">
+                Download Excel
+              </button>
+              <button
+                onClick={handleLogout}
+                className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all shadow-lg hover:shadow-xl"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
 
@@ -488,14 +548,30 @@ const AdminDashboard = ({ setCurrentView, setIsAdmin }) => {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-6 mb-6">
+          {/* Breakfast Card */}
+          <div className="bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl shadow-xl p-6 text-white">
+            <div className="flex items-center justify-between mb-4">
+              <Coffee className="w-8 h-8" />
+              <TrendingUp className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Breakfast</h3>
+            <p className="text-3xl font-bold mb-1">{calculateTotals('Breakfast')}</p>
+            <div className="text-sm opacity-90">
+              {(() => {
+                const { veg, nonVeg } = calculateVegNonVeg('Breakfast');
+                return `${veg} Veg • ${nonVeg} Non-Veg`;
+              })()}
+            </div>
+          </div>
+
           {/* Lunch Card */}
           <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-xl p-6 text-white">
             <div className="flex items-center justify-between mb-4">
               <Utensils className="w-8 h-8" />
               <TrendingUp className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Lunch Attendees</h3>
+            <h3 className="text-lg font-semibold mb-2">Lunch</h3>
             <p className="text-3xl font-bold mb-1">{calculateTotals('Lunch')}</p>
             <div className="text-sm opacity-90">
               {(() => {
@@ -506,12 +582,12 @@ const AdminDashboard = ({ setCurrentView, setIsAdmin }) => {
           </div>
 
           {/* Dinner Card */}
-          <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-xl p-6 text-white">
+          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-xl p-6 text-white">
             <div className="flex items-center justify-between mb-4">
               <Utensils className="w-8 h-8" />
               <TrendingUp className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Dinner Attendees</h3>
+            <h3 className="text-lg font-semibold mb-2">Dinner</h3>
             <p className="text-3xl font-bold mb-1">{calculateTotals('Dinner')}</p>
             <div className="text-sm opacity-90">
               {(() => {
@@ -549,7 +625,7 @@ const AdminDashboard = ({ setCurrentView, setIsAdmin }) => {
               <div className="text-2xl">🌱</div>
               <CheckCircle className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Total Vegetarian</h3>
+            <h3 className="text-lg font-semibold mb-2">Total Veg</h3>
             <p className="text-3xl font-bold">{totalVegNonVeg.veg}</p>
             <div className="text-sm opacity-90">Veg meals today</div>
           </div>
@@ -598,14 +674,28 @@ const AdminDashboard = ({ setCurrentView, setIsAdmin }) => {
                     </td>
                   </tr>
                 ) : (
-                  filteredMeals.map((meal, index) => (
+                  filteredMeals
+                    .sort((a, b) => {
+                      const mealOrder = { 'Breakfast': 1, 'Lunch': 2, 'Dinner': 3 };
+                      return mealOrder[a.mode] - mealOrder[b.mode] || a.name.localeCompare(b.name);
+                    })
+                    .map((meal, index) => (
                     <tr key={index} className="hover:bg-green-50 transition-colors border-b border-green-50">
                       <td className="p-4 font-medium">
                         {new Date(meal.date).toLocaleDateString()}
                       </td>
                       <td className="p-4 font-medium text-gray-800">{meal.name}</td>
                       <td className="p-4">
-                        <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          meal.mode === 'Breakfast' 
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : meal.mode === 'Lunch'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {meal.mode === 'Breakfast' && '🌅'} 
+                          {meal.mode === 'Lunch' && '🍽️'} 
+                          {meal.mode === 'Dinner' && '🌙'} 
                           {meal.mode}
                         </span>
                       </td>

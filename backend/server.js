@@ -6,7 +6,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const ExcelJS = require('exceljs');
 
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -45,7 +44,7 @@ const MealSchema = new mongoose.Schema({
   },
   mode: {
     type: String,
-    enum: ['Lunch', 'Dinner'],
+    enum: ['Breakfast', 'Lunch', 'Dinner'],
     required: true
   },
   status: {
@@ -77,6 +76,26 @@ const AdminSchema = new mongoose.Schema({
 
 const Meal = mongoose.model('Meal', MealSchema);
 const Admin = mongoose.model('Admin', AdminSchema);
+
+// Helper function to determine the correct date for breakfast
+const getBreakfastDate = () => {
+  const now = new Date();
+  const hour = now.getHours();
+  
+  // Breakfast is always for NEXT DAY if current time is >= 6 AM
+  // Breakfast is for SAME DAY if current time is < 6 AM (midnight to 6 AM)
+  const targetDate = new Date();
+  
+  if (hour >= 6) {
+    // From 6 AM onwards (including 8 PM), breakfast is for next day
+    targetDate.setDate(targetDate.getDate() + 1);
+  }
+  // For times between midnight and 6 AM, breakfast is for same day
+  
+  // Set to start of day for consistent grouping
+  targetDate.setHours(0, 0, 0, 0);
+  return targetDate;
+};
 
 // Middleware to verify JWT token
 const authenticateAdmin = (req, res, next) => {
@@ -117,13 +136,20 @@ app.post('/api/meals', async (req, res) => {
       });
     }
     
-    // Set current date (start of day for grouping)
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
+    // Set the correct date based on meal type
+    let targetDate;
+    
+    if (mode === 'Breakfast') {
+      targetDate = getBreakfastDate();
+    } else {
+      // For Lunch and Dinner, use current date
+      targetDate = new Date();
+      targetDate.setHours(0, 0, 0, 0);
+    }
     
     const meal = new Meal({
       name: name.trim(),
-      date: currentDate,
+      date: targetDate,
       mode,
       status,
       type: status === 'In' ? type : null
@@ -308,6 +334,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Excel export with breakfast support
 app.get('/api/admin/export-excel', async (req, res) => {
   try {
     const { date } = req.query; // format: YYYY-MM-DD
@@ -325,7 +352,7 @@ app.get('/api/admin/export-excel', async (req, res) => {
     const meals = await Meal.find({
       date: { $gte: start, $lt: end },
       status: 'In' // exclude out
-    });
+    }).sort({ mode: 1, name: 1 }); // Sort by meal type, then name
 
     // Create Excel workbook
     const workbook = new ExcelJS.Workbook();
@@ -335,9 +362,9 @@ app.get('/api/admin/export-excel', async (req, res) => {
 
     meals.forEach(meal => {
       worksheet.addRow([
-        meal.name ,
+        meal.name,
         meal.date ? meal.date.toISOString().split('T')[0] : '',
-        meal.mode ,
+        meal.mode,
         meal.type 
       ]);
     });
@@ -353,7 +380,6 @@ app.get('/api/admin/export-excel', async (req, res) => {
     res.status(500).send('Error generating Excel');
   }
 });
-
 
 // Error handling middleware
 app.use((err, req, res, next) => {
