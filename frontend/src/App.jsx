@@ -205,35 +205,45 @@ const Homepage = ({ setCurrentView, setIsAdmin }) => {
 
             {/* Type Selection (only if "In" is selected) */}
             {showTypeSelection && (
-              <div className="space-y-3 animate-in slide-in-from-top-2 duration-300">
-                <label className="flex items-center space-x-2 text-green-700 font-semibold">
-                  <Leaf className="w-4 h-4" />
-                  <span>Food Preference</span>
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { type: 'Veg', icon: '🌱', color: 'emerald' },
-                    { type: 'Non-Veg', icon: '🍖', color: 'orange' }
-                  ].map(({ type, icon, color }) => (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, type })}
-                      className={`p-4 rounded-xl font-semibold transition-all text-center border-2 ${
-                        formData.type === type
-                          ? color === 'emerald'
-                            ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg'
-                            : 'bg-orange-500 text-white border-orange-500 shadow-lg'
-                          : 'bg-green-50 text-green-700 border-green-200 hover:border-green-300 hover:bg-green-100'
-                      }`}
-                    >
-                      <div className="text-2xl mb-1">{icon}</div>
-                      {type}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+  <div className="space-y-3 animate-in slide-in-from-top-2 duration-300">
+    <label className="flex items-center space-x-2 text-green-700 font-semibold">
+      <Leaf className="w-4 h-4" />
+      <span>Food Preference</span>
+    </label>
+    <div className="grid grid-cols-2 gap-3">
+      {[
+        { type: 'Veg', icon: '🌱', color: 'emerald' },
+        { type: 'Non-Veg', icon: '🍖', color: 'orange' }
+      ]
+        // Filter so Non-Veg appears only on Sunday (0), Wednesday (3), and Friday (5)
+        .filter(({ type }) => {
+          const today = new Date().getDay();
+          if (type === 'Non-Veg') {
+            return [0, 3, 5].includes(today);
+          }
+          return true; // Always keep Veg
+        })
+        .map(({ type, icon, color }) => (
+          <button
+            key={type}
+            type="button"
+            onClick={() => setFormData({ ...formData, type })}
+            className={`p-4 rounded-xl font-semibold transition-all text-center border-2 ${
+              formData.type === type
+                ? color === 'emerald'
+                  ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg'
+                  : 'bg-orange-500 text-white border-orange-500 shadow-lg'
+                : 'bg-green-50 text-green-700 border-green-200 hover:border-green-300 hover:bg-green-100'
+            }`}
+          >
+            <div className="text-2xl mb-1">{icon}</div>
+            {type}
+          </button>
+        ))}
+    </div>
+  </div>
+)}
+
 
             {/* Submit Button */}
             <button
