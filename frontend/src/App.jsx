@@ -388,6 +388,11 @@ const AdminDashboard = ({ setCurrentView, setIsAdmin }) => {
       setLoading(false);
     }
   };
+ const handleDownload = () => {
+  if (!selectedDate) return alert("Please select a date first!");
+  window.open(`${API_BASE}/admin/export-excel?date=${selectedDate}`, '_blank');
+};
+
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
@@ -450,12 +455,16 @@ const AdminDashboard = ({ setCurrentView, setIsAdmin }) => {
               </h1>
               <p className="text-green-600">Catering Management System</p>
             </div>
+            <button onClick={handleDownload} className="bg-green-500 text-white px-4 py-2 rounded">
+  Download Excel
+</button>
             <button
               onClick={handleLogout}
               className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all shadow-lg hover:shadow-xl"
             >
               Logout
             </button>
+
           </div>
         </div>
 

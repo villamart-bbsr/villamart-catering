@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const ExcelJS = require('exceljs');
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -305,6 +307,53 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
+app.get('/api/admin/export-excel', async (req, res) => {
+  try {
+    const { date } = req.query; // format: YYYY-MM-DD
+
+    if (!date) {
+      return res.status(400).send('Date is required');
+    }
+
+    // Start and end time for that day
+    const start = new Date(date);
+    const end = new Date(date);
+    end.setDate(end.getDate() + 1);
+
+    // Get only "in" meals for that date
+    const meals = await Meal.find({
+      date: { $gte: start, $lt: end },
+      status: 'In' // exclude out
+    });
+
+    // Create Excel workbook
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Meals Data');
+
+    worksheet.addRow(['Name', 'Date', 'Mode', 'Preference']);
+
+    meals.forEach(meal => {
+      worksheet.addRow([
+        meal.name ,
+        meal.date ? meal.date.toISOString().split('T')[0] : '',
+        meal.mode ,
+        meal.type 
+      ]);
+    });
+
+    // Send Excel file
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=meals_${date}.xlsx`);
+
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error generating Excel');
+  }
+});
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
