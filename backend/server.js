@@ -343,43 +343,87 @@ app.get('/api/admin/export-excel', async (req, res) => {
       return res.status(400).send('Date is required');
     }
 
-    // Start and end time for that day
     const start = new Date(date);
     const end = new Date(date);
     end.setDate(end.getDate() + 1);
 
-    // Get only "in" meals for that date
+    // Get only "In" meals for that date
     const meals = await Meal.find({
       date: { $gte: start, $lt: end },
-      status: 'In' // exclude out
-    }).sort({ mode: 1, name: 1 }); // Sort by meal type, then name
+      status: 'In'
+    }).sort({ mode: 1, name: 1 }); // sorted by mode then name
 
-    // Create Excel workbook
+    // Group meals by mode
+    const grouped = {
+      Breakfast: [],
+      Lunch: [],
+      Dinner: []
+    };
+
+    meals.forEach(meal => {
+      if (grouped[meal.mode]) {
+        grouped[meal.mode].push(meal);
+      }
+    });
+
+    // Create Excel
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Meals Data');
 
-    worksheet.addRow(['Name', 'Date', 'Mode', 'Preference']);
+    // Styles
+    const headerStyle = {
+      font: { bold: true },
+      alignment: { horizontal: 'center' }
+    };
 
-    meals.forEach(meal => {
+    // For each meal type
+    Object.keys(grouped).forEach(mode => {
+      worksheet.addRow([`${mode}`]).font = { bold: true, size: 14 };
+      worksheet.addRow(['Name', 'Date', 'Mode', 'Preference']).eachCell(cell => {
+        cell.font = headerStyle.font;
+        cell.alignment = headerStyle.alignment;
+      });
+
+      grouped[mode].forEach(meal => {
+        worksheet.addRow([
+          meal.name,
+          meal.date ? meal.date.toISOString().split('T')[0] : '',
+          meal.mode,
+          meal.type
+        ]);
+      });
+
+      // Count totals
+      const totalCount = grouped[mode].length;
+      const vegCount = grouped[mode].filter(m => m.type?.toLowerCase() === 'veg').length;
+      const nonVegCount = grouped[mode].filter(m => m.type?.toLowerCase() === 'non-veg').length;
+
+      // Total row
       worksheet.addRow([
-        meal.name,
-        meal.date ? meal.date.toISOString().split('T')[0] : '',
-        meal.mode,
-        meal.type 
-      ]);
+        `Total ${mode}: ${totalCount} (Veg: ${vegCount}, Non-Veg: ${nonVegCount})`
+      ]).font = { bold: true };
+      worksheet.addRow([]); // Blank line for separation
     });
 
     // Send Excel file
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', `attachment; filename=meals_${date}.xlsx`);
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=meals_${date}.xlsx`
+    );
 
     await workbook.xlsx.write(res);
     res.end();
+
   } catch (err) {
     console.error(err);
     res.status(500).send('Error generating Excel');
   }
 });
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
