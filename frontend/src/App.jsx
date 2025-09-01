@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Users, Utensils, Shield, CheckCircle, XCircle, Calendar, TrendingUp, User, Leaf, Coffee } from 'lucide-react';
+import { Clock, Users, Utensils, Shield, CheckCircle, XCircle, Calendar, TrendingUp, User, Leaf, Coffee, Star, Sparkles, ChefHat, Heart } from 'lucide-react';
 
 // Mock API functions (replace with actual API calls)
 const API_BASE = import.meta.env.VITE_API_BASE; // Vite
@@ -56,7 +56,6 @@ const getBreakfastDateInfo = () => {
   };
 };
 
-// Homepage Component
 // Day-wise menu data
 const MENU = {
   Monday: {
@@ -95,6 +94,8 @@ const MENU = {
     Dinner: 'Rice, Egg Curry/ Potal-Ful kobi Curry, Bhaja'
   }
 };
+
+// Homepage Component
 const Homepage = ({ setCurrentView, setIsAdmin }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [formData, setFormData] = useState({
@@ -170,249 +171,318 @@ const Homepage = ({ setCurrentView, setIsAdmin }) => {
   const breakfastInfo = getBreakfastDateInfo();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-4">
-      <div className="max-w-lg mx-auto">
-        {/* Today's Menu Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-green-200">
-          <h2 className="text-xl font-bold text-green-700 mb-2 text-center">Today's Menu ({dayName})</h2>
-          <div className="grid grid-cols-1 gap-2">
-            <div>
-              <span className="font-semibold text-yellow-700">Breakfast:</span>
-              <span className="ml-2 text-green-700">{todayMenu.Breakfast || 'No menu available.'}</span>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-20 -left-20 w-96 h-96 bg-gradient-to-r from-green-300/20 to-emerald-300/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/2 -right-20 w-80 h-80 bg-gradient-to-r from-teal-300/20 to-cyan-300/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute -bottom-20 left-1/3 w-72 h-72 bg-gradient-to-r from-emerald-300/20 to-green-300/20 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
+
+      <div className="relative z-10 p-4 md:p-6">
+        <div className="max-w-lg mx-auto space-y-6">
+          {/* Enhanced Header Card */}
+          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/30 relative overflow-hidden">
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-400/10 to-emerald-400/10 rounded-full -translate-y-16 translate-x-16"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-teal-400/10 to-cyan-400/10 rounded-full translate-y-12 -translate-x-12"></div>
+            
+            <div className="text-center mb-6 relative">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 rounded-3xl mb-4 shadow-2xl relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600 rounded-3xl animate-pulse"></div>
+                <ChefHat className="w-10 h-10 text-white relative z-10" />
+                <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
+                  <Sparkles className="w-3 h-3 text-yellow-800" />
+                </div>
+              </div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-700 via-emerald-600 to-teal-600 bg-clip-text text-transparent mb-3 tracking-tight">
+                VillaMart Catering
+              </h1>
+              <div className="flex items-center justify-center space-x-2 mb-4">
+                <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                <p className="text-emerald-600 font-semibold tracking-wide">Premium Daily Meals</p>
+                <Star className="w-4 h-4 text-yellow-500 fill-current" />
+              </div>
             </div>
-            <div>
-              <span className="font-semibold text-green-700">Lunch:</span>
-              <span className="ml-2 text-green-700">{todayMenu.Lunch || 'No menu available.'}</span>
+
+            <div className="bg-gradient-to-r from-green-100 via-emerald-100 to-teal-100 rounded-2xl p-6 border border-green-200/50 backdrop-blur-sm">
+              <div className="flex items-center justify-center space-x-3 mb-3">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <Clock className="w-5 h-5 text-green-600" />
+                <span className="text-green-700 font-bold text-lg">{getGreeting()}!</span>
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse delay-300"></div>
+              </div>
+              <p className="text-green-700 font-semibold text-center mb-2">
+                {currentTime.toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </p>
+              <p className="text-green-600 text-center text-xl font-mono bg-white/50 rounded-lg py-2 px-4">
+                {currentTime.toLocaleTimeString()}
+              </p>
             </div>
-            <div>
-              <span className="font-semibold text-blue-700">Dinner:</span>
-              <span className="ml-2 text-green-700">{todayMenu.Dinner || 'No menu available.'}</span>
-            </div>
-          </div>
-        </div>
-        {/* Header Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-green-100">
-          <div className="text-center mb-4">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl mb-4 shadow-lg">
-              <Utensils className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent mb-2">
-              VillaMart Catering
-            </h1>
-            <p className="text-green-600 font-medium">Daily Meal Tracker</p>
           </div>
 
-          <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-4 border border-green-200">
-            <div className="flex items-center justify-center space-x-2 mb-2">
-                {/* Show today's menu for selected meal type */}
-                <div style={{ marginTop: '1rem', padding: '1rem', background: '#f6f6f6', borderRadius: '8px' }}>
-                  <strong>Today's Menu for {formData.mode} ({dayName}):</strong>
-                  <div style={{ marginTop: '0.5rem' }}>
+          {/* Enhanced Menu Card */}
+          <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/30 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500"></div>
+            
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <Utensils className="w-6 h-6 text-emerald-600" />
+              <h2 className="text-2xl font-bold text-emerald-700">Today's Menu</h2>
+              <div className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold">
+                {dayName}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 gap-4">
+              {[
+                { key: 'Breakfast', icon: '🌅', color: 'from-yellow-500 to-orange-500', textColor: 'text-yellow-800' },
+                { key: 'Lunch', icon: '🍽️', color: 'from-green-500 to-emerald-500', textColor: 'text-green-800' },
+                { key: 'Dinner', icon: '🌙', color: 'from-blue-500 to-indigo-500', textColor: 'text-blue-800' }
+              ].map(({ key, icon, color, textColor }) => (
+                <div key={key} className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all duration-300 group">
+                  <div className="flex items-start space-x-3">
+                    <div className={`w-12 h-12 bg-gradient-to-r ${color} rounded-xl flex items-center justify-center text-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      {icon}
+                    </div>
+                    <div className="flex-1">
+                      <span className={`font-bold text-lg ${textColor} block mb-1`}>{key}</span>
+                      <span className="text-gray-700 text-sm leading-relaxed">
+                        {todayMenu[key] || 'No menu available.'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Enhanced Form Card */}
+          <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/30 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500"></div>
+            
+            <div className="space-y-8">
+              {/* Name Input */}
+              <div className="space-y-3">
+                <label className="flex items-center space-x-3 text-emerald-700 font-bold text-lg">
+                  <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
+                    <User className="w-5 h-5 text-white" />
+                  </div>
+                  <span>Your Name</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full p-4 pl-12 border-2 border-emerald-200 rounded-2xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 focus:outline-none transition-all bg-emerald-50/50 placeholder-emerald-400 text-lg font-medium"
+                    placeholder="Enter your full name"
+                  />
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-emerald-300 rounded-full"></div>
+                </div>
+              </div>
+
+              {/* Meal Type Selection */}
+              <div className="space-y-4">
+                <label className="flex items-center space-x-3 text-emerald-700 font-bold text-lg">
+                  <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                    <Utensils className="w-5 h-5 text-white" />
+                  </div>
+                  <span>Meal Type</span>
+                </label>
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { mode: 'Breakfast', icon: '🌅', bgColor: 'from-yellow-500 to-orange-500', hoverColor: 'hover:from-yellow-600 hover:to-orange-600' },
+                    { mode: 'Lunch', icon: '🍽️', bgColor: 'from-green-500 to-emerald-500', hoverColor: 'hover:from-green-600 hover:to-emerald-600' },
+                    { mode: 'Dinner', icon: '🌙', bgColor: 'from-blue-500 to-indigo-500', hoverColor: 'hover:from-blue-600 hover:to-indigo-600' }
+                  ].map(({ mode, icon, bgColor, hoverColor }) => (
+                    <label key={mode} className="relative group">
+                      <input
+                        type="radio"
+                        name="mode"
+                        value={mode}
+                        checked={formData.mode === mode}
+                        onChange={(e) => setFormData({ ...formData, mode: e.target.value })}
+                        className="sr-only"
+                      />
+                      <div className={`p-4 rounded-2xl border-2 cursor-pointer transition-all text-center font-bold transform group-hover:scale-105 ${
+                        formData.mode === mode
+                          ? `border-transparent bg-gradient-to-r ${bgColor} text-white shadow-2xl scale-105`
+                          : `border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 hover:border-emerald-300 hover:shadow-lg ${hoverColor} hover:text-white`
+                      }`}>
+                        <div className="text-3xl mb-2">{icon}</div>
+                        <div className="text-sm">{mode}</div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+                
+                {/* Enhanced Breakfast Info */}
+                {formData.mode === 'Breakfast' && (
+                  <div className="bg-gradient-to-r from-yellow-100 via-orange-100 to-amber-100 border-2 border-yellow-300 rounded-2xl p-5 animate-in slide-in-from-top-3 duration-500 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 to-orange-400"></div>
+                    <div className="flex items-start space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                        <Coffee className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-yellow-800 mb-2 text-lg">
+                          Breakfast Selection ({breakfastInfo.timeRange})
+                        </p>
+                        <p className="text-yellow-700 font-medium">
+                          {breakfastInfo.isNextDay 
+                            ? `🌅 Selecting breakfast for tomorrow (${breakfastInfo.targetDate})`
+                            : `☀️ Selecting breakfast for today`
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Menu Display for Selected Meal */}
+                <div className="bg-gradient-to-r from-gray-50 to-white rounded-2xl p-5 border border-gray-200">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Heart className="w-5 h-5 text-red-500 fill-current" />
+                    <strong className="text-gray-700">Today's {formData.mode} Menu ({dayName}):</strong>
+                  </div>
+                  <div className="text-gray-600 font-medium bg-white rounded-lg p-3 shadow-sm">
                     {todayMenu[formData.mode] || 'No menu available.'}
                   </div>
                 </div>
-              <Clock className="w-5 h-5 text-green-600" />
-              <span className="text-green-700 font-semibold">{getGreeting()}!</span>
-            </div>
-            <p className="text-green-700 font-semibold text-center">
-              {currentTime.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
-            </p>
-            <p className="text-green-600 text-center text-lg font-mono">
-              {currentTime.toLocaleTimeString()}
-            </p>
-          </div>
-        </div>
-
-        {/* Main Form Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 border border-green-100">
-          <div className="space-y-6">
-            {/* Name Input */}
-            <div className="space-y-2">
-              <label className="flex items-center space-x-2 text-green-700 font-semibold">
-                <User className="w-4 h-4" />
-                <span>Your Name</span>
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full p-4 border-2 border-green-200 rounded-xl focus:border-green-500 focus:outline-none transition-colors bg-green-50/50 placeholder-green-400"
-                placeholder="Enter your full name"
-              />
-            </div>
-
-            {/* Mode Selection */}
-            <div className="space-y-3">
-              <label className="flex items-center space-x-2 text-green-700 font-semibold">
-                <Utensils className="w-4 h-4" />
-                <span>Meal Type</span>
-              </label>
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { mode: 'Breakfast', icon: '🌅', bgColor: 'from-yellow-500 to-orange-500' },
-                  { mode: 'Lunch', icon: '🍽️', bgColor: 'from-green-500 to-emerald-500' },
-                  { mode: 'Dinner', icon: '🌙', bgColor: 'from-blue-500 to-indigo-500' }
-                ].map(({ mode, icon, bgColor }) => (
-                  <label key={mode} className="relative">
-                    <input
-                      type="radio"
-                      name="mode"
-                      value={mode}
-                      checked={formData.mode === mode}
-                      onChange={(e) => setFormData({ ...formData, mode: e.target.value })}
-                      className="sr-only"
-                    />
-                    <div className={`p-4 rounded-xl border-2 cursor-pointer transition-all text-center font-medium ${
-                      formData.mode === mode
-                        ? `border-transparent bg-gradient-to-r ${bgColor} text-white shadow-lg`
-                        : 'border-green-200 bg-green-50 text-green-700 hover:border-green-300 hover:bg-green-100'
-                    }`}>
-                      <div className="text-2xl mb-1">{icon}</div>
-                      <div className="text-sm">{mode}</div>
-                    </div>
-                  </label>
-                ))}
               </div>
-              
-              {/* Breakfast Info Banner */}
-              {formData.mode === 'Breakfast' && (
-                <div className="bg-gradient-to-r from-yellow-100 to-orange-100 border-2 border-yellow-200 rounded-xl p-4 animate-in slide-in-from-top-2 duration-300">
-                  <div className="flex items-start space-x-3">
-                    <Coffee className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-                    <div className="text-sm">
-                      <p className="font-semibold text-yellow-800 mb-1">
-                        Breakfast Selection ({breakfastInfo.timeRange})
-                      </p>
-                      <p className="text-yellow-700">
-                        {breakfastInfo.isNextDay 
-                          ? `You're selecting breakfast for tomorrow (${breakfastInfo.targetDate})`
-                          : `You're selecting breakfast for today`
-                        }
-                      </p>
+
+              {/* Status Selection */}
+              <div className="space-y-4">
+                <label className="flex items-center space-x-3 text-emerald-700 font-bold text-lg">
+                  <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+                    <CheckCircle className="w-5 h-5 text-white" />
+                  </div>
+                  <span>Attendance Status</span>
+                </label>
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { status: 'In', icon: '✅', color: 'green', label: 'I am In', bgGradient: 'from-green-500 to-emerald-500' },
+                    { status: 'Out', icon: '❌', color: 'red', label: 'I am Out', bgGradient: 'from-red-500 to-pink-500' }
+                  ].map(({ status, icon, color, label, bgGradient }) => (
+                    <button
+                      key={status}
+                      type="button"
+                      onClick={() => handleStatusChange(status)}
+                      className={`p-5 rounded-2xl font-bold transition-all text-center border-2 transform hover:scale-105 ${
+                        formData.status === status
+                          ? `bg-gradient-to-r ${bgGradient} text-white border-transparent shadow-2xl scale-105`
+                          : 'bg-gradient-to-r from-gray-50 to-white text-gray-700 border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                      }`}
+                    >
+                      <div className="text-3xl mb-2">{icon}</div>
+                      <div className="text-sm">{label}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Enhanced Type Selection */}
+              {showTypeSelection && (
+                <div className="space-y-4 animate-in slide-in-from-top-3 duration-500">
+                  <label className="flex items-center space-x-3 text-emerald-700 font-bold text-lg">
+                    <div className="w-10 h-10 bg-gradient-to-r from-lime-500 to-green-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <Leaf className="w-5 h-5 text-white" />
                     </div>
+                    <span>Food Preference</span>
+                  </label>
+                  <div className="grid grid-cols-2 gap-4">
+                    {[
+                      { type: 'Veg', icon: '🌱', color: 'emerald', bgGradient: 'from-emerald-500 to-green-500' },
+                      { type: 'Non-Veg', icon: '🍖', color: 'orange', bgGradient: 'from-orange-500 to-red-500' }
+                    ]
+                      .filter(({ type }) => {
+                        const today = new Date().getDay();
+                        if (type === 'Non-Veg') {
+                          return [0, 3, 5].includes(today);
+                        }
+                        return true;
+                      })
+                      .map(({ type, icon, color, bgGradient }) => (
+                        <button
+                          key={type}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, type })}
+                          className={`p-5 rounded-2xl font-bold transition-all text-center border-2 transform hover:scale-105 ${
+                            formData.type === type
+                              ? `bg-gradient-to-r ${bgGradient} text-white border-transparent shadow-2xl scale-105`
+                              : 'bg-gradient-to-r from-green-50 to-emerald-50 text-emerald-700 border-emerald-200 hover:border-emerald-300 hover:shadow-lg'
+                          }`}
+                        >
+                          <div className="text-3xl mb-2">{icon}</div>
+                          <div className="text-sm">{type}</div>
+                        </button>
+                      ))}
                   </div>
                 </div>
               )}
+
+              {/* Enhanced Submit Button */}
+              <button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white p-5 rounded-2xl font-bold text-xl hover:from-emerald-700 hover:via-teal-700 hover:to-cyan-700 transition-all shadow-2xl hover:shadow-3xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 transform hover:scale-105 hover:-translate-y-1"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                    <span>Submitting...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-6 h-6" />
+                    <span>Submit Entry</span>
+                    <Sparkles className="w-5 h-5" />
+                  </>
+                )}
+              </button>
             </div>
+          </div>
 
-            {/* Status Selection */}
-            <div className="space-y-3">
-              <label className="flex items-center space-x-2 text-green-700 font-semibold">
-                <CheckCircle className="w-4 h-4" />
-                <span>Attendance Status</span>
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { status: 'In', icon: '✅', color: 'green', label: 'I am In' },
-                  { status: 'Out', icon: '❌', color: 'red', label: 'I am Out' }
-                ].map(({ status, icon, color, label }) => (
-                  <button
-                    key={status}
-                    type="button"
-                    onClick={() => handleStatusChange(status)}
-                    className={`p-4 rounded-xl font-semibold transition-all text-center border-2 ${
-                      formData.status === status
-                        ? color === 'green' 
-                          ? 'bg-green-500 text-white border-green-500 shadow-lg'
-                          : 'bg-red-500 text-white border-red-500 shadow-lg'
-                        : 'bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-300 hover:bg-gray-100'
-                    }`}
-                  >
-                    <div className="text-2xl mb-1">{icon}</div>
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Type Selection (only if "In" is selected) */}
-            {showTypeSelection && (
-              <div className="space-y-3 animate-in slide-in-from-top-2 duration-300">
-                <label className="flex items-center space-x-2 text-green-700 font-semibold">
-                  <Leaf className="w-4 h-4" />
-                  <span>Food Preference</span>
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { type: 'Veg', icon: '🌱', color: 'emerald' },
-                    { type: 'Non-Veg', icon: '🍖', color: 'orange' }
-                  ]
-                    // Filter so Non-Veg appears only on Sunday (0), Wednesday (3), and Friday (5)
-                    .filter(({ type }) => {
-                      const today = new Date().getDay();
-                      if (type === 'Non-Veg') {
-                        return [0, 3, 5].includes(today);
-                      }
-                      return true; // Always keep Veg
-                    })
-                    .map(({ type, icon, color }) => (
-                      <button
-                        key={type}
-                        type="button"
-                        onClick={() => setFormData({ ...formData, type })}
-                        className={`p-4 rounded-xl font-semibold transition-all text-center border-2 ${
-                          formData.type === type
-                            ? color === 'emerald'
-                              ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg'
-                              : 'bg-orange-500 text-white border-orange-500 shadow-lg'
-                            : 'bg-green-50 text-green-700 border-green-200 hover:border-green-300 hover:bg-green-100'
-                        }`}
-                      >
-                        <div className="text-2xl mb-1">{icon}</div>
-                        {type}
-                      </button>
-                    ))}
-                </div>
-              </div>
-            )}
-
-            {/* Submit Button */}
+          {/* Enhanced Admin Access Card */}
+          <div className="bg-gradient-to-r from-slate-900 via-gray-800 to-slate-900 rounded-3xl shadow-2xl p-6 border border-gray-700 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-full blur-2xl"></div>
+            
             <button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white p-4 rounded-xl font-semibold text-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              onClick={() => setCurrentView('admin-login')}
+              className="w-full bg-gradient-to-r from-gray-700 via-slate-700 to-gray-700 hover:from-gray-600 hover:via-slate-600 hover:to-gray-600 text-white p-5 rounded-2xl font-bold text-lg transition-all shadow-xl hover:shadow-2xl flex items-center justify-center space-x-3 transform hover:scale-105 border border-gray-600"
             >
-              {isSubmitting ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  <span>Submitting...</span>
-                </>
-              ) : (
-                <>
-                  <CheckCircle className="w-5 h-5" />
-                  <span>Submit Entry</span>
-                </>
-              )}
+              <Shield className="w-6 h-6" />
+              <span>Admin Dashboard</span>
+              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
             </button>
           </div>
-        </div>
 
-        {/* Admin Access Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mt-6 border border-green-100">
-          <button
-            onClick={() => setCurrentView('admin-login')}
-            className="w-full bg-gradient-to-r from-green-800 to-emerald-800 text-white p-4 rounded-xl font-semibold hover:from-green-900 hover:to-emerald-900 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
-          >
-            <Shield className="w-5 h-5" />
-            <span>Admin Dashboard</span>
-          </button>
-        </div>
-
-        {/* Footer */}
-        <div className="text-center mt-6 text-green-600">
-          <p className="text-sm">Powered by VillaMart Catering System</p>
+          {/* Enhanced Footer */}
+          <div className="text-center py-6">
+            <div className="flex items-center justify-center space-x-2 text-emerald-600 font-semibold">
+              <Star className="w-4 h-4 fill-current" />
+              <p>Powered by VillaMart Catering System</p>
+              <Star className="w-4 h-4 fill-current" />
+            </div>
+            <div className="flex items-center justify-center space-x-1 mt-2 text-teal-500 text-sm">
+              <Heart className="w-3 h-3 fill-current" />
+              <span>Made with love for our community</span>
+              <Heart className="w-3 h-3 fill-current" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-// Admin Login Component
+// Enhanced Admin Login Component
 const AdminLogin = ({ setCurrentView, setIsAdmin }) => {
   const [passkey, setPasskey] = useState('');
   const [loading, setLoading] = useState(false);
@@ -437,62 +507,78 @@ const AdminLogin = ({ setCurrentView, setIsAdmin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 border border-green-100">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl mb-4 shadow-lg">
-            <Shield className="w-8 h-8 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+      {/* Animated background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl p-8 border border-white/20">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-3xl mb-6 shadow-2xl relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl animate-pulse"></div>
+              <Shield className="w-10 h-10 text-white relative z-10" />
+              <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
+                <Sparkles className="w-3 h-3 text-yellow-800" />
+              </div>
+            </div>
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent mb-3">
+              Admin Access
+            </h2>
+            <p className="text-gray-300 font-medium">VillaMart Catering Dashboard</p>
           </div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent mb-2">
-            Admin Access
-          </h2>
-          <p className="text-green-600">VillaMart Catering Dashboard</p>
-        </div>
-        
-        <div className="space-y-6">
-          <div>
-            <label className="block text-green-700 font-semibold mb-3">Security Passkey</label>
-            <input
-              type="password"
-              value={passkey}
-              onChange={(e) => setPasskey(e.target.value)}
-              className="w-full p-4 border-2 border-green-200 rounded-xl focus:border-green-500 focus:outline-none transition-colors bg-green-50/50"
-              placeholder="Enter admin passkey"
-              onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-            />
+          
+          <div className="space-y-6">
+            <div>
+              <label className="block text-white font-bold mb-4 text-lg">Security Passkey</label>
+              <div className="relative">
+                <input
+                  type="password"
+                  value={passkey}
+                  onChange={(e) => setPasskey(e.target.value)}
+                  className="w-full p-5 bg-white/10 border-2 border-white/20 rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-400/20 focus:outline-none transition-all text-white placeholder-gray-400 text-lg backdrop-blur-sm"
+                  placeholder="Enter admin passkey"
+                  onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                />
+                <div className="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-blue-400 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+            
+            <button
+              onClick={handleLogin}
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white p-5 rounded-2xl font-bold text-lg hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 transition-all shadow-2xl hover:shadow-3xl disabled:opacity-50 flex items-center justify-center space-x-3 transform hover:scale-105"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                  <span>Authenticating...</span>
+                </>
+              ) : (
+                <>
+                  <Shield className="w-6 h-6" />
+                  <span>Access Dashboard</span>
+                  <Sparkles className="w-5 h-5" />
+                </>
+              )}
+            </button>
           </div>
           
           <button
-            onClick={handleLogin}
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white p-4 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center space-x-2"
+            onClick={() => setCurrentView('homepage')}
+            className="w-full mt-6 bg-white/10 backdrop-blur-sm text-gray-300 p-4 rounded-2xl font-semibold hover:bg-white/20 transition-all border border-white/20 hover:border-white/30"
           >
-            {loading ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                <span>Authenticating...</span>
-              </>
-            ) : (
-              <>
-                <Shield className="w-5 h-5" />
-                <span>Access Dashboard</span>
-              </>
-            )}
+            ← Back to Home
           </button>
         </div>
-        
-        <button
-          onClick={() => setCurrentView('homepage')}
-          className="w-full mt-6 bg-gray-100 text-gray-700 p-4 rounded-xl font-semibold hover:bg-gray-200 transition-all border border-gray-200"
-        >
-          ← Back to Home
-        </button>
       </div>
     </div>
   );
 };
 
-// Admin Dashboard Component
+// Enhanced Admin Dashboard Component
 const AdminDashboard = ({ setCurrentView, setIsAdmin }) => {
   const [meals, setMeals] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -558,10 +644,11 @@ const AdminDashboard = ({ setCurrentView, setIsAdmin }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <div className="text-green-700 text-xl font-semibold">Loading Dashboard...</div>
+          <div className="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="text-white text-2xl font-bold mb-2">Loading Dashboard...</div>
+          <div className="text-gray-400">Please wait while we fetch your data</div>
         </div>
       </div>
     );
@@ -570,229 +657,294 @@ const AdminDashboard = ({ setCurrentView, setIsAdmin }) => {
   const totalVegNonVeg = calculateTotalVegNonVeg();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-green-100">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent mb-2">
-                VillaMart Admin Dashboard
-              </h1>
-              <p className="text-green-600">Catering Management System</p>
-            </div>
-            <div className="flex gap-3">
-              <button onClick={handleDownload} className="bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600 transition-colors">
-                Download Excel
-              </button>
-              <button
-                onClick={handleLogout}
-                className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all shadow-lg hover:shadow-xl"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+      {/* Background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-blue-600/5 to-purple-600/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-r from-purple-600/5 to-pink-600/5 rounded-full blur-3xl"></div>
+      </div>
 
-        {/* Date Selector */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-green-100">
-          <label className="flex items-center space-x-2 text-green-700 font-semibold mb-4">
-            <Calendar className="w-5 h-5" />
-            <span>Select Date</span>
-          </label>
-          <div className="flex flex-col lg:flex-row gap-4 items-start">
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="p-3 border-2 border-green-200 rounded-xl focus:border-green-500 focus:outline-none bg-green-50/50"
-            />
-            <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-xl">
-              <strong>Available dates:</strong> {getAvailableDates().slice(-5).join(', ')}
-            </div>
-          </div>
-        </div>
-
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-6 mb-6">
-          {/* Breakfast Card */}
-          <div className="bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl shadow-xl p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <Coffee className="w-8 h-8" />
-              <TrendingUp className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Breakfast</h3>
-            <p className="text-3xl font-bold mb-1">{calculateTotals('Breakfast')}</p>
-            <div className="text-sm opacity-90">
-              {(() => {
-                const { veg, nonVeg } = calculateVegNonVeg('Breakfast');
-                return `${veg} Veg • ${nonVeg} Non-Veg`;
-              })()}
+      <div className="relative z-10 p-4 md:p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Enhanced Header */}
+          <div className="bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl p-8 border border-white/20 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+            
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-2xl">
+                  <TrendingUp className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent mb-2">
+                    VillaMart Admin
+                  </h1>
+                  <p className="text-gray-300 font-medium">Advanced Catering Analytics</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button 
+                  onClick={handleDownload} 
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-2xl hover:from-green-700 hover:to-emerald-700 transition-all font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center space-x-2"
+                >
+                  <Calendar className="w-5 h-5" />
+                  <span>Export Excel</span>
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="bg-gradient-to-r from-red-600 to-pink-600 text-white px-6 py-3 rounded-2xl font-semibold hover:from-red-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Lunch Card */}
-          <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-xl p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <Utensils className="w-8 h-8" />
-              <TrendingUp className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Lunch</h3>
-            <p className="text-3xl font-bold mb-1">{calculateTotals('Lunch')}</p>
-            <div className="text-sm opacity-90">
-              {(() => {
-                const { veg, nonVeg } = calculateVegNonVeg('Lunch');
-                return `${veg} Veg • ${nonVeg} Non-Veg`;
-              })()}
-            </div>
-          </div>
-
-          {/* Dinner Card */}
-          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-xl p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <Utensils className="w-8 h-8" />
-              <TrendingUp className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Dinner</h3>
-            <p className="text-3xl font-bold mb-1">{calculateTotals('Dinner')}</p>
-            <div className="text-sm opacity-90">
-              {(() => {
-                const { veg, nonVeg } = calculateVegNonVeg('Dinner');
-                return `${veg} Veg • ${nonVeg} Non-Veg`;
-              })()}
+          {/* Enhanced Date Selector */}
+          <div className="bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl p-6 border border-white/20">
+            <label className="flex items-center space-x-3 text-white font-bold text-lg mb-4">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
+                <Calendar className="w-5 h-5 text-white" />
+              </div>
+              <span>Select Date</span>
+            </label>
+            <div className="flex flex-col lg:flex-row gap-4 items-start">
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="p-4 bg-white/10 border-2 border-white/20 rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-400/20 focus:outline-none text-white backdrop-blur-sm text-lg"
+              />
+              <div className="text-sm text-gray-300 bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/10 flex-1">
+                <strong className="text-white">Recent dates:</strong> {getAvailableDates().slice(-5).join(', ') || 'No data available'}
+              </div>
             </div>
           </div>
 
-          {/* Total In */}
-          <div className="bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl shadow-xl p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <Users className="w-8 h-8" />
-              <CheckCircle className="w-6 h-6" />
+          {/* Enhanced Summary Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4">
+            {/* Breakfast Card */}
+            <div className="bg-gradient-to-br from-yellow-500 via-orange-500 to-red-500 rounded-3xl shadow-2xl p-6 text-white relative overflow-hidden transform hover:scale-105 transition-all duration-300">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                    <Coffee className="w-6 h-6" />
+                  </div>
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">Breakfast</h3>
+                <p className="text-3xl font-black mb-2">{calculateTotals('Breakfast')}</p>
+                <div className="text-sm opacity-90 font-medium">
+                  {(() => {
+                    const { veg, nonVeg } = calculateVegNonVeg('Breakfast');
+                    return `🌱 ${veg} Veg • 🍖 ${nonVeg} Non-Veg`;
+                  })()}
+                </div>
+              </div>
             </div>
-            <h3 className="text-lg font-semibold mb-2">Total Present</h3>
-            <p className="text-3xl font-bold">{filteredMeals.filter(meal => meal.status === 'In').length}</p>
-            <div className="text-sm opacity-90">People dining today</div>
+
+            {/* Lunch Card */}
+            <div className="bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 rounded-3xl shadow-2xl p-6 text-white relative overflow-hidden transform hover:scale-105 transition-all duration-300">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                    <Utensils className="w-6 h-6" />
+                  </div>
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">Lunch</h3>
+                <p className="text-3xl font-black mb-2">{calculateTotals('Lunch')}</p>
+                <div className="text-sm opacity-90 font-medium">
+                  {(() => {
+                    const { veg, nonVeg } = calculateVegNonVeg('Lunch');
+                    return `🌱 ${veg} Veg • 🍖 ${nonVeg} Non-Veg`;
+                  })()}
+                </div>
+              </div>
+            </div>
+
+            {/* Dinner Card */}
+            <div className="bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 rounded-3xl shadow-2xl p-6 text-white relative overflow-hidden transform hover:scale-105 transition-all duration-300">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                    <Utensils className="w-6 h-6" />
+                  </div>
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">Dinner</h3>
+                <p className="text-3xl font-black mb-2">{calculateTotals('Dinner')}</p>
+                <div className="text-sm opacity-90 font-medium">
+                  {(() => {
+                    const { veg, nonVeg } = calculateVegNonVeg('Dinner');
+                    return `🌱 ${veg} Veg • 🍖 ${nonVeg} Non-Veg`;
+                  })()}
+                </div>
+              </div>
+            </div>
+
+            {/* Total Present Card */}
+            <div className="bg-gradient-to-br from-teal-500 via-cyan-500 to-blue-500 rounded-3xl shadow-2xl p-6 text-white relative overflow-hidden transform hover:scale-105 transition-all duration-300">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                    <Users className="w-6 h-6" />
+                  </div>
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">Present</h3>
+                <p className="text-3xl font-black mb-2">{filteredMeals.filter(meal => meal.status === 'In').length}</p>
+                <div className="text-sm opacity-90 font-medium">People dining</div>
+              </div>
+            </div>
+
+            {/* Total Absent Card */}
+            <div className="bg-gradient-to-br from-gray-600 via-slate-600 to-gray-700 rounded-3xl shadow-2xl p-6 text-white relative overflow-hidden transform hover:scale-105 transition-all duration-300">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                    <Users className="w-6 h-6" />
+                  </div>
+                  <XCircle className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">Absent</h3>
+                <p className="text-3xl font-black mb-2">{filteredMeals.filter(meal => meal.status === 'Out').length}</p>
+                <div className="text-sm opacity-90 font-medium">People out</div>
+              </div>
+            </div>
+
+            {/* Total Veg Card */}
+            <div className="bg-gradient-to-br from-lime-500 via-green-500 to-emerald-500 rounded-3xl shadow-2xl p-6 text-white relative overflow-hidden transform hover:scale-105 transition-all duration-300">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm text-2xl">
+                    🌱
+                  </div>
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">Total Veg</h3>
+                <p className="text-3xl font-black mb-2">{totalVegNonVeg.veg}</p>
+                <div className="text-sm opacity-90 font-medium">Veg meals today</div>
+              </div>
+            </div>
+
+            {/* Total Non-Veg Card */}
+            <div className="bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 rounded-3xl shadow-2xl p-6 text-white relative overflow-hidden transform hover:scale-105 transition-all duration-300">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm text-2xl">
+                    🍖
+                  </div>
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">Non-Veg</h3>
+                <p className="text-3xl font-black mb-2">{totalVegNonVeg.nonVeg}</p>
+                <div className="text-sm opacity-90 font-medium">Non-veg meals</div>
+              </div>
+            </div>
           </div>
 
-          {/* Total Out */}
-          <div className="bg-gradient-to-br from-gray-500 to-gray-600 rounded-2xl shadow-xl p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <Users className="w-8 h-8" />
-              <XCircle className="w-6 h-6" />
+          {/* Enhanced Data Table */}
+          <div className="bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl overflow-hidden border border-white/20">
+            <div className="p-6 border-b border-white/20 bg-gradient-to-r from-blue-600/10 to-purple-600/10">
+              <h3 className="text-2xl font-bold text-white flex items-center space-x-3">
+                <Calendar className="w-6 h-6" />
+                <span>Daily Meal Records</span>
+              </h3>
             </div>
-            <h3 className="text-lg font-semibold mb-2">Total Absent</h3>
-            <p className="text-3xl font-bold">{filteredMeals.filter(meal => meal.status === 'Out').length}</p>
-            <div className="text-sm opacity-90">People not dining</div>
-          </div>
-
-          {/* Total Veg Card */}
-          <div className="bg-gradient-to-br from-lime-500 to-green-600 rounded-2xl shadow-xl p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-2xl">🌱</div>
-              <CheckCircle className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Total Veg</h3>
-            <p className="text-3xl font-bold">{totalVegNonVeg.veg}</p>
-            <div className="text-sm opacity-90">Veg meals today</div>
-          </div>
-
-          {/* Total Non-Veg Card */}
-          <div className="bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-xl p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-2xl">🍖</div>
-              <CheckCircle className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Total Non-Veg</h3>
-            <p className="text-3xl font-bold">{totalVegNonVeg.nonVeg}</p>
-            <div className="text-sm opacity-90">Non-veg meals today</div>
-          </div>
-        </div>
-
-        {/* Data Table */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-green-100">
-          <div className="p-6 border-b border-green-100">
-            <h3 className="text-xl font-semibold text-green-800">Daily Meal Records</h3>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
-                <tr>
-                  <th className="p-4 text-left font-semibold">Date</th>
-                  <th className="p-4 text-left font-semibold">Name</th>
-                  <th className="p-4 text-left font-semibold">Meal</th>
-                  <th className="p-4 text-left font-semibold">Status</th>
-                  <th className="p-4 text-left font-semibold">Type</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredMeals.length === 0 ? (
+            
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white">
                   <tr>
-                    <td colSpan="5" className="p-8 text-center text-gray-500">
-                      <div className="flex flex-col items-center space-y-2">
-                        <Calendar className="w-12 h-12 text-gray-300" />
-                        <p className="text-lg font-semibold">No data available</p>
-                        <p className="text-sm">No records found for {selectedDate}</p>
-                        {getAvailableDates().length > 0 && (
-                          <p className="text-sm">Try: {getAvailableDates().slice(-3).join(', ')}</p>
-                        )}
-                      </div>
-                    </td>
+                    <th className="p-4 text-left font-bold">Date</th>
+                    <th className="p-4 text-left font-bold">Name</th>
+                    <th className="p-4 text-left font-bold">Meal</th>
+                    <th className="p-4 text-left font-bold">Status</th>
+                    <th className="p-4 text-left font-bold">Type</th>
                   </tr>
-                ) : (
-                  filteredMeals
-                    .sort((a, b) => {
-                      const mealOrder = { 'Breakfast': 1, 'Lunch': 2, 'Dinner': 3 };
-                      return mealOrder[a.mode] - mealOrder[b.mode] || a.name.localeCompare(b.name);
-                    })
-                    .map((meal, index) => (
-                    <tr key={index} className="hover:bg-green-50 transition-colors border-b border-green-50">
-                      <td className="p-4 font-medium">
-                        {new Date(meal.date).toLocaleDateString()}
-                      </td>
-                      <td className="p-4 font-medium text-gray-800">{meal.name}</td>
-                      <td className="p-4">
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          meal.mode === 'Breakfast' 
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : meal.mode === 'Lunch'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {meal.mode === 'Breakfast' && '🌅'} 
-                          {meal.mode === 'Lunch' && '🍽️'} 
-                          {meal.mode === 'Dinner' && '🌙'} 
-                          {meal.mode}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          meal.status === 'In' 
-                            ? 'bg-emerald-100 text-emerald-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {meal.status === 'In' ? '✅ Present' : '❌ Absent'}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        {meal.type ? (
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            meal.type === 'Veg' 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-orange-100 text-orange-800'
-                          }`}>
-                            {meal.type === 'Veg' ? '🌱 Veg' : '🍖 Non-Veg'}
-                          </span>
-                        ) : (
-                          <span className="text-gray-400">-</span>
-                        )}
+                </thead>
+                <tbody>
+                  {filteredMeals.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="p-12 text-center text-gray-300">
+                        <div className="flex flex-col items-center space-y-4">
+                          <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center">
+                            <Calendar className="w-10 h-10 text-gray-400" />
+                          </div>
+                          <div>
+                            <p className="text-2xl font-bold text-white mb-2">No Data Available</p>
+                            <p className="text-gray-400 mb-4">No records found for {selectedDate}</p>
+                            {getAvailableDates().length > 0 && (
+                              <p className="text-sm text-gray-500">
+                                Try dates: {getAvailableDates().slice(-3).join(', ')}
+                              </p>
+                            )}
+                          </div>
+                        </div>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    filteredMeals
+                      .sort((a, b) => {
+                        const mealOrder = { 'Breakfast': 1, 'Lunch': 2, 'Dinner': 3 };
+                        return mealOrder[a.mode] - mealOrder[b.mode] || a.name.localeCompare(b.name);
+                      })
+                      .map((meal, index) => (
+                      <tr key={index} className="hover:bg-white/5 transition-colors border-b border-white/10 text-white">
+                        <td className="p-4 font-semibold">
+                          {new Date(meal.date).toLocaleDateString()}
+                        </td>
+                        <td className="p-4 font-semibold">{meal.name}</td>
+                        <td className="p-4">
+                          <span className={`px-4 py-2 rounded-full text-sm font-bold ${
+                            meal.mode === 'Breakfast' 
+                              ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white'
+                              : meal.mode === 'Lunch'
+                              ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+                              : 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
+                          }`}>
+                            {meal.mode === 'Breakfast' && '🌅'} 
+                            {meal.mode === 'Lunch' && '🍽️'} 
+                            {meal.mode === 'Dinner' && '🌙'} 
+                            {meal.mode}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <span className={`px-4 py-2 rounded-full text-sm font-bold ${
+                            meal.status === 'In' 
+                              ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
+                              : 'bg-gradient-to-r from-red-500 to-pink-500 text-white'
+                          }`}>
+                            {meal.status === 'In' ? '✅ Present' : '❌ Absent'}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          {meal.type ? (
+                            <span className={`px-4 py-2 rounded-full text-sm font-bold ${
+                              meal.type === 'Veg' 
+                                ? 'bg-gradient-to-r from-lime-500 to-green-500 text-white' 
+                                : 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
+                            }`}>
+                              {meal.type === 'Veg' ? '🌱 Veg' : '🍖 Non-Veg'}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
