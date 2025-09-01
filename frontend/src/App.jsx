@@ -57,6 +57,44 @@ const getBreakfastDateInfo = () => {
 };
 
 // Homepage Component
+// Day-wise menu data
+const MENU = {
+  Monday: {
+    Breakfast: 'Veg Upma+ Ghuguni',
+    Lunch: 'Rice, Dalma + Alu-Baigan Bharata, Saga Bhaja',
+    Dinner: 'Rice, Soyabadi-Veg Mix Ghanta, Bhaja'
+  },
+  Tuesday: {
+    Breakfast: 'Plane Idli + Dalma',
+    Lunch: 'Rice, Chhole/ Veg Mix Curry + Bhaja',
+    Dinner: 'Rice, Veg Biriyani +Raita'
+  },
+  Wednesday: {
+    Breakfast: 'Simei Upma Halwa + Dalma',
+    Lunch: 'Rice, Chicken/ Mushroom Curry, Bhaja/Salad',
+    Dinner: 'Rice, Buta Dal Mix Curry + Bhaja'
+  },
+  Thursday: {
+    Breakfast: 'Vegetable mix Idli+ Ghuguni',
+    Lunch: 'Rice, Matar Mix Ghanta, Dahi Baigan, Saga Bhaja',
+    Dinner: 'Rice, Dalma + Alu baigan Bharata'
+  },
+  Friday: {
+    Breakfast: 'Uthapam + Chatni/ Ghuguni',
+    Lunch: 'Rice, Fish Curry/ Paneer/mushroom curry, Bhaja',
+    Dinner: 'Rice, Fish/ Mix Dalma ghanta, Alu-baigan Bharata'
+  },
+  Saturday: {
+    Breakfast: 'Plane Idli + Ghuguni',
+    Lunch: 'Rice, Veg Biriyani+ Raita',
+    Dinner: 'Rice, Dal, Bhaja'
+  },
+  Sunday: {
+    Breakfast: 'Bada, Ghuguni',
+    Lunch: 'Rice, Chicken/ Paneer Curry, Mix Salad',
+    Dinner: 'Rice, Egg Curry/ Potal-Ful kobi Curry, Bhaja'
+  }
+};
 const Homepage = ({ setCurrentView, setIsAdmin }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [formData, setFormData] = useState({
@@ -67,6 +105,10 @@ const Homepage = ({ setCurrentView, setIsAdmin }) => {
   });
   const [showTypeSelection, setShowTypeSelection] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get today's menu
+  const dayName = currentTime.toLocaleDateString('en-US', { weekday: 'long' });
+  const todayMenu = MENU[dayName] || {};
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -130,6 +172,24 @@ const Homepage = ({ setCurrentView, setIsAdmin }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-4">
       <div className="max-w-lg mx-auto">
+        {/* Today's Menu Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-green-200">
+          <h2 className="text-xl font-bold text-green-700 mb-2 text-center">Today's Menu ({dayName})</h2>
+          <div className="grid grid-cols-1 gap-2">
+            <div>
+              <span className="font-semibold text-yellow-700">Breakfast:</span>
+              <span className="ml-2 text-green-700">{todayMenu.Breakfast || 'No menu available.'}</span>
+            </div>
+            <div>
+              <span className="font-semibold text-green-700">Lunch:</span>
+              <span className="ml-2 text-green-700">{todayMenu.Lunch || 'No menu available.'}</span>
+            </div>
+            <div>
+              <span className="font-semibold text-blue-700">Dinner:</span>
+              <span className="ml-2 text-green-700">{todayMenu.Dinner || 'No menu available.'}</span>
+            </div>
+          </div>
+        </div>
         {/* Header Card */}
         <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-green-100">
           <div className="text-center mb-4">
@@ -144,6 +204,13 @@ const Homepage = ({ setCurrentView, setIsAdmin }) => {
 
           <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-4 border border-green-200">
             <div className="flex items-center justify-center space-x-2 mb-2">
+                {/* Show today's menu for selected meal type */}
+                <div style={{ marginTop: '1rem', padding: '1rem', background: '#f6f6f6', borderRadius: '8px' }}>
+                  <strong>Today's Menu for {formData.mode} ({dayName}):</strong>
+                  <div style={{ marginTop: '0.5rem' }}>
+                    {todayMenu[formData.mode] || 'No menu available.'}
+                  </div>
+                </div>
               <Clock className="w-5 h-5 text-green-600" />
               <span className="text-green-700 font-semibold">{getGreeting()}!</span>
             </div>
